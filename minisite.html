@@ -20,7 +20,7 @@
 // [/]
 // 		`;
 
-		const opening_tag_regex = /^\[[^\[\]]+\]/;
+		const opening_tag_regex = /^\[([^\[\]]+)\]/;
 
 		class Node {
 			constructor(tag_name, child_nodes) {
@@ -44,16 +44,18 @@
 			// parse next sibling node
 			if (opening_tag_regex.test(string)) {
 
-				string = string.replace(opening_tag_regex, "");	// remove opening tag
-				({ nodes, string } = parse(string));			// parse child nodes of this node
-				string = string.replace("[/]", "");				// remove closing tag
+				const opening_tag = opening_tag_regex.exec(string);
+
+				string = string.substring(opening_tag[0].length);	// remove opening tag
+				({ nodes, string } = parse(string));				// parse child nodes of this node
+				string = string.replace("[/]", "");					// remove closing tag
 
 				let children = nodes;
 
 				({ nodes, string } = parse(string));			// parse following siblings
 
 				return {
-					nodes: [ new Node("?", children) ].concat(nodes),
+					nodes: [ new Node(opening_tag[1], children) ].concat(nodes),
 					string: string
 				};
 			}
