@@ -3,10 +3,15 @@
 <head>
 	<meta charset="UTF-8">
 	<title>Minisite</title>
+	<style>
+		img { height: 200px; }
+	</style>
 	<script>
 		const data = `
 [h1]Big header[/]
 Here is some text that's cool I guess.
+[/br]
+Here's another line.
 [bul]
 [h2][a https://github.com/dairycultist/MiniSiteParser]Page 1[/][/]
 Here's some info on page 1.
@@ -15,10 +20,11 @@ Here's some info on page 1.
 [h2][a https://github.com/dairycultist/MiniSiteParser]Page 2[/][/]
 Here's some info on page 2.
 [/]
-[/]
+[/img https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/60420990-fa4a-4ffb-b409-1f57236c54cf/dh5jlig-a12146f1-f0aa-499b-a8a6-b61cb0782496.jpg/v1/fill/w_720,h_720,q_75,strp/aesthetic_anime_girl_pfp_by_amygamerofc_dh5jlig-fullview.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9NzIwIiwicGF0aCI6Ii9mLzYwNDIwOTkwLWZhNGEtNGZmYi1iNDA5LTFmNTcyMzZjNTRjZi9kaDVqbGlnLWExMjE0NmYxLWYwYWEtNDk5Yi1hOGE2LWI2MWNiMDc4MjQ5Ni5qcGciLCJ3aWR0aCI6Ijw9NzIwIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmltYWdlLm9wZXJhdGlvbnMiXX0.mOqbPM93XGqfe5c9lRTT7CGtHBsrhan-BQO926pfcrM]
 		`;
 
 		const opening_tag_regex = /\[([^\[\]]+)\]/;
+		const self_closing_tag_regex = /\[\/([^\[\]]+)\]/;
 
 		class Node {
 
@@ -46,6 +52,8 @@ Here's some info on page 2.
 					case "h1": return "<h1>" + this.children_html() + "</h1>";
 					case "h2": return "<h2>" + this.children_html() + "</h2>";
 					case "a": return "<a href='" + this.data + "'>" + this.children_html() + "</a>";
+					case "br": return "<br>";
+					case "img": return `<img src="${ this.data }" alt="${ this.children_html() }">`;
 					case "bul": return "<ul><li>" + this.children_html() + "</li></ul>";
 					default: return this.children_html(); // return "<fieldset><legend>" + this.tag_name + "</legend>" + this.children_html() + "</fieldset>";
 				}
@@ -59,6 +67,24 @@ Here's some info on page 2.
 
 				return {
 					nodes: [],
+					string: string
+				};
+			}
+
+			// parse next SELF-CLOSING sibling node
+			if (string.search(self_closing_tag_regex) == 0) {
+
+				const tag = self_closing_tag_regex.exec(string);
+
+				string = string.substring(tag[0].length); // remove tag
+
+				({ nodes, string } = parse(string)); // parse following siblings
+
+				// parse out tag name from data
+				let tag_parts = tag[1].split(" ", 2);
+
+				return {
+					nodes: [ new Node(tag_parts[0], [], tag_parts[1]) ].concat(nodes),
 					string: string
 				};
 			}
@@ -85,7 +111,7 @@ Here's some info on page 2.
 				};
 			}
 
-			// parse next sibling text node
+			// parse next sibling TEXT node
 			const end_of_text_node = string.search(opening_tag_regex) != -1 ? string.search(opening_tag_regex) : string.indexOf("[/]") != -1 ? string.indexOf("[/]") : string.length;
 
 			const text = string.substring(0, end_of_text_node);
