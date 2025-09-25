@@ -8,11 +8,11 @@
 [h1]Big header[/]
 Here is some text that's cool I guess.
 [bul]
-[a link=""][h2]Page 1[/][/]
+[h2][a https://github.com/dairycultist/MiniSiteParser]Page 1[/][/]
 Here's some info on page 1.
 [/]
 [bul]
-[a link=""][h2]Page 2[/][/]
+[h2][a https://github.com/dairycultist/MiniSiteParser]Page 2[/][/]
 Here's some info on page 2.
 [/]
 [/]
@@ -22,10 +22,10 @@ Here's some info on page 2.
 
 		class Node {
 
-			constructor(tag_name, child_nodes, attributes) {
+			constructor(tag_name, child_nodes, data) {
 				this.tag_name = tag_name; // string
 				this.child_nodes = child_nodes; // array of Nodes
-				this.attributes = attributes; // key-value pairs, e.g. link="google.com"
+				this.data = data; // string
 			}
 
 			children_html() {
@@ -42,11 +42,12 @@ Here's some info on page 2.
 			to_html() {
 
 				switch (this.tag_name) {
-					case "text": return this.attributes.text;
+					case "text": return this.data;
 					case "h1": return "<h1>" + this.children_html() + "</h1>";
 					case "h2": return "<h2>" + this.children_html() + "</h2>";
+					case "a": return "<a href='" + this.data + "'>" + this.children_html() + "</a>";
 					case "bul": return "<ul><li>" + this.children_html() + "</li></ul>";
-					default: return "<fieldset><legend>" + this.tag_name + "</legend>" + this.children_html() + "</fieldset>";
+					default: return this.children_html(); // return "<fieldset><legend>" + this.tag_name + "</legend>" + this.children_html() + "</fieldset>";
 				}
 			}
 		}
@@ -73,10 +74,13 @@ Here's some info on page 2.
 
 				let children = nodes;
 
-				({ nodes, string } = parse(string));			// parse following siblings
+				({ nodes, string } = parse(string)); // parse following siblings
+
+				// parse out tag name from data
+				let tag_parts = opening_tag[1].split(" ", 2);
 
 				return {
-					nodes: [ new Node(opening_tag[1], children, {}) ].concat(nodes),
+					nodes: [ new Node(tag_parts[0], children, tag_parts[1]) ].concat(nodes),
 					string: string
 				};
 			}
@@ -90,7 +94,7 @@ Here's some info on page 2.
 			({ nodes, string } = parse(string)); // parse following siblings
 
 			return {
-				nodes: [ new Node("text", [], { text: text }) ].concat(nodes),
+				nodes: [ new Node("text", [], text) ].concat(nodes),
 				string: string
 			};
 		}
