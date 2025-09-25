@@ -5,6 +5,9 @@
 	<title>Minisite</title>
 	<style>
 		img { height: 200px; }
+		h2 { margin-bottom: 0.5em; }
+		h1 { background: blue; color: white; padding: 0.5em; padding-bottom: 0.4em; }
+		a { color: blue; }
 	</style>
 	<script>
 		const opening_tag_regex = /\[([^\[\]]+)\]/;
@@ -126,7 +129,7 @@
 	
 	<textarea id="input" rows="30" cols="200" oninput="refresh_output();">
 [h1]Big header[/]
-Here is some text that's cool I guess.
+Here is some text that's [a]cool[/a] I guess.
 [/br]
 Here's another line.
 [bul]
