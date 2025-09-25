@@ -4,10 +4,8 @@
 	<meta charset="UTF-8">
 	<title>Minisite</title>
 	<script>
-		const data = `[a][/][b][/]`;
-// 		`
-// [body]
-// [h1]Big header[/]
+		const data =
+		`[body]dog[h1]Big header[/]cat[/]`;
 // Here is some text that's cool I guess.
 // [bul]
 // [a link=""][h2]Page 1[/][/]
@@ -20,7 +18,7 @@
 // [/]
 // 		`;
 
-		const opening_tag_regex = /^\[([^\[\]]+)\]/;
+		const initial_opening_tag_regex = /^\[([^\[\]]+)\]/;
 
 		class Node {
 			constructor(tag_name, child_nodes) {
@@ -42,9 +40,9 @@
 			}
 
 			// parse next sibling node
-			if (opening_tag_regex.test(string)) {
+			if (initial_opening_tag_regex.test(string)) {
 
-				const opening_tag = opening_tag_regex.exec(string);
+				const opening_tag = initial_opening_tag_regex.exec(string);
 
 				string = string.substring(opening_tag[0].length);	// remove opening tag
 				({ nodes, string } = parse(string));				// parse child nodes of this node
@@ -61,15 +59,37 @@
 			}
 
 			// parse next sibling text
-			string = string.substring(string.search(opening_tag_regex) != -1 ? string.search(opening_tag_regex) : string.indexOf("[/]") != -1 ? string.indexOf("[/]") : string.length);
+			if (string.search(/\[([^\[\]]+)\]/) != -1) {
 
-			// parse following siblings
-			({ nodes, string } = parse(string));
+				string = string.substring(string.search(/\[([^\[\]]+)\]/));
 
-			return {
-				nodes: [ new Node("text", []) ].concat(nodes),
-				string: string
-			};
+				console.log(string);
+
+				({ nodes, string } = parse(string)); // parse following siblings
+
+				return {
+					nodes: [ new Node("text", []) ].concat(nodes),
+					string: string
+				};
+
+			} else if (string.indexOf("[/]") != -1) {
+
+				string = string.substring(string.indexOf("[/]"));
+
+				return {
+					nodes: [ new Node("text", []) ],
+					string: string
+				};
+
+			} else {
+
+				string = string.substring(string.length);
+
+				return {
+					nodes: [ new Node("text", []) ],
+					string: string
+				};
+			}
 		}
 
 		console.log(parse(data));
