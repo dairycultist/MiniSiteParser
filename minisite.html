@@ -4,19 +4,19 @@
 	<meta charset="UTF-8">
 	<title>Minisite</title>
 	<script>
-		const data =
-		`dog[h1]Big header[/]cat`;
-// Here is some text that's cool I guess.
-// [bul]
-// [a link=""][h2]Page 1[/][/]
-// Here's some info on page 1.
-// [/]
-// [bul]
-// [a link=""][h2]Page 2[/][/]
-// Here's some info on page 2.
-// [/]
-// [/]
-// 		`;
+		const data = `
+[h1]Big header[/]
+Here is some text that's cool I guess.
+[bul]
+[a link=""][h2]Page 1[/][/]
+Here's some info on page 1.
+[/]
+[bul]
+[a link=""][h2]Page 2[/][/]
+Here's some info on page 2.
+[/]
+[/]
+		`;
 
 		const opening_tag_regex = /\[([^\[\]]+)\]/;
 
@@ -28,22 +28,26 @@
 				this.attributes = attributes; // key-value pairs, e.g. link="google.com"
 			}
 
-			to_html() {
+			children_html() {
 
-				if (this.tag_name == "text") {
-
-					return this.attributes.text;
-				}
-
-				let construct = "<fieldset><legend>" + this.tag_name + "</legend>";
+				let construct = "";
 
 				for (let child of this.child_nodes) {
 					construct += child.to_html();
 				}
 
-				construct += "</fieldset>";
-
 				return construct;
+			}
+
+			to_html() {
+
+				switch (this.tag_name) {
+					case "text": return this.attributes.text;
+					case "h1": return "<h1>" + this.children_html() + "</h1>";
+					case "h2": return "<h2>" + this.children_html() + "</h2>";
+					case "bul": return "<ul><li>" + this.children_html() + "</li></ul>";
+					default: return "<fieldset><legend>" + this.tag_name + "</legend>" + this.children_html() + "</fieldset>";
+				}
 			}
 		}
 
