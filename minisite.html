@@ -7,22 +7,6 @@
 		img { height: 200px; }
 	</style>
 	<script>
-		const data = `
-[h1]Big header[/]
-Here is some text that's cool I guess.
-[/br]
-Here's another line.
-[bul]
-[h2][a https://github.com/dairycultist/MiniSiteParser]Page 1[/][/]
-Here's some info on page 1.
-[/]
-[bul]
-[h2][a https://github.com/dairycultist/MiniSiteParser]Page 2[/][/]
-Here's some info on page 2.
-[/]
-[/img https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/60420990-fa4a-4ffb-b409-1f57236c54cf/dh5jlig-a12146f1-f0aa-499b-a8a6-b61cb0782496.jpg/v1/fill/w_720,h_720,q_75,strp/aesthetic_anime_girl_pfp_by_amygamerofc_dh5jlig-fullview.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9NzIwIiwicGF0aCI6Ii9mLzYwNDIwOTkwLWZhNGEtNGZmYi1iNDA5LTFmNTcyMzZjNTRjZi9kaDVqbGlnLWExMjE0NmYxLWYwYWEtNDk5Yi1hOGE2LWI2MWNiMDc4MjQ5Ni5qcGciLCJ3aWR0aCI6Ijw9NzIwIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmltYWdlLm9wZXJhdGlvbnMiXX0.mOqbPM93XGqfe5c9lRTT7CGtHBsrhan-BQO926pfcrM]
-		`;
-
 		const opening_tag_regex = /\[([^\[\]]+)\]/;
 		const self_closing_tag_regex = /\[\/([^\[\]]+)\]/;
 
@@ -124,9 +108,43 @@ Here's some info on page 2.
 				string: string
 			};
 		}
+
+		function refresh_output() {
+
+			const data = document.getElementById("input").value;
+
+			try {
+				document.getElementById("output").innerHTML = new Node("body", parse(data).nodes, {}).to_html();
+				document.getElementById("debug").innerHTML = "";
+			} catch (e) {
+				document.getElementById("debug").innerHTML = "Poorly formatted! " + e;
+			}
+		}
 	</script>
 </head>
-<body onload="document.body.innerHTML = new Node('body', parse(data).nodes, {}).to_html();">
-	<img src="minisite.png" height="400"><br>
+<body onload="refresh_output();">
+	
+	<textarea id="input" rows="30" cols="200" oninput="refresh_output();">
+[h1]Big header[/]
+Here is some text that's cool I guess.
+[/br]
+Here's another line.
+[bul]
+	[h2][a https://github.com/dairycultist/MiniSiteParser]Page 1[/][/]
+	Here's some info on page 1.
+[/]
+[bul]
+	[h2][a https://github.com/dairycultist/MiniSiteParser]Page 2[/][/]
+	Here's some info on page 2.
+[/]
+[/img https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/60420990-fa4a-4ffb-b409-1f57236c54cf/dh5jlig-a12146f1-f0aa-499b-a8a6-b61cb0782496.jpg/v1/fill/w_720,h_720,q_75,strp/aesthetic_anime_girl_pfp_by_amygamerofc_dh5jlig-fullview.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9NzIwIiwicGF0aCI6Ii9mLzYwNDIwOTkwLWZhNGEtNGZmYi1iNDA5LTFmNTcyMzZjNTRjZi9kaDVqbGlnLWExMjE0NmYxLWYwYWEtNDk5Yi1hOGE2LWI2MWNiMDc4MjQ5Ni5qcGciLCJ3aWR0aCI6Ijw9NzIwIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmltYWdlLm9wZXJhdGlvbnMiXX0.mOqbPM93XGqfe5c9lRTT7CGtHBsrhan-BQO926pfcrM]
+    </textarea>
+
+	<div id="debug" style="color: red; height: 2em; font-family: monospace;"></div>
+
+	<div id="output">
+
+	</div>
+
 </body>
 </html>
