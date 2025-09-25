@@ -8,6 +8,7 @@
 		h2 { margin-bottom: 0.5em; }
 		h1 { background: blue; color: white; padding: 0.5em; padding-bottom: 0.4em; }
 		a { color: blue; }
+		#output { width: 800px; margin: auto; }
 	</style>
 	<script>
 		const opening_tag_regex = /\[([^\[\]]+)\]/;
@@ -129,9 +130,9 @@
 	
 	<textarea id="input" rows="30" cols="200" oninput="refresh_output();">
 [h1]Big header[/]
-Here is some text that's [a]cool[/a] I guess.
-[/br]
-Here's another line.
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas erat ipsum, ultricies eu urna et, lobortis congue quam. Aenean ullamcorper ligula sem, ut tempus nisl vulputate ut. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Phasellus et ultrices dolor, vitae sodales odio. Praesent quis dui et leo tristique ultrices at rhoncus ex. Nunc ut consectetur elit.
+[/br][/br]
+Visit the [a https://github.com/dairycultist/MiniSiteParser]repository[/] for this site!
 [bul]
 	[h2][a https://github.com/dairycultist/MiniSiteParser]Page 1[/][/]
 	Here's some info on page 1.
@@ -145,9 +146,7 @@ Here's another line.
 
 	<div id="debug" style="color: red; height: 2em; font-family: monospace;"></div>
 
-	<div id="output">
-
-	</div>
+	<div id="output"></div>
 
 </body>
 </html>
