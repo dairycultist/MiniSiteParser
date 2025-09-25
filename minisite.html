@@ -18,7 +18,7 @@
 // [/]
 // 		`;
 
-		const initial_opening_tag_regex = /^\[([^\[\]]+)\]/;
+		const opening_tag_regex = /\[([^\[\]]+)\]/;
 
 		class Node {
 			constructor(tag_name, child_nodes) {
@@ -40,9 +40,9 @@
 			}
 
 			// parse next sibling node
-			if (initial_opening_tag_regex.test(string)) {
+			if (string.search(opening_tag_regex) == 0) {
 
-				const opening_tag = initial_opening_tag_regex.exec(string);
+				const opening_tag = opening_tag_regex.exec(string);
 
 				string = string.substring(opening_tag[0].length);	// remove opening tag
 				({ nodes, string } = parse(string));				// parse child nodes of this node
@@ -59,11 +59,9 @@
 			}
 
 			// parse next sibling text
-			if (string.search(/\[([^\[\]]+)\]/) != -1) {
+			if (string.search(opening_tag_regex) != -1) {
 
-				string = string.substring(string.search(/\[([^\[\]]+)\]/));
-
-				console.log(string);
+				string = string.substring(string.search(opening_tag_regex));
 
 				({ nodes, string } = parse(string)); // parse following siblings
 
