@@ -21,10 +21,15 @@
 		const opening_tag_regex = /\[([^\[\]]+)\]/;
 
 		class Node {
+
 			constructor(tag_name, child_nodes) {
 				this.tag_name = tag_name;
 				this.child_nodes = child_nodes;
 				// TODO attributes, e.g. link="google.com"
+			}
+
+			to_html() {
+				return "cat";
 			}
 		}
 
@@ -70,18 +75,9 @@
 					string: string
 				};
 
-			} else if (string.indexOf("[/]") != -1) {
-
-				string = string.substring(string.indexOf("[/]"));
-
-				return {
-					nodes: [ new Node("text", []) ],
-					string: string
-				};
-
 			} else {
 
-				string = string.substring(string.length);
+				string = string.substring(string.indexOf("[/]") != -1 ? string.indexOf("[/]") : string.length);
 
 				return {
 					nodes: [ new Node("text", []) ],
@@ -89,11 +85,9 @@
 				};
 			}
 		}
-
-		console.log(parse(data));
 	</script>
 </head>
-<body>
+<body onload="document.body.innerHTML = new Node('body', parse(data).nodes).to_html();">
 	<img src="minisite.png" height="400"><br>
 </body>
 </html>
